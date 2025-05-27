@@ -1,50 +1,111 @@
 import { useState } from "react"
 
-import reactLogo from "./assets/react.svg"
-import viteLogo from "/vite.svg"
+// import { TanStackFormExample } from "./forms/TanStackForm"
+
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Separator } from "@/components/ui/separator"
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table"
+
+import { FormikForm } from "./forms/FormikForm"
+import { RHFForm } from "./forms/RHFForm"
 
 import "./App.css"
 
-function App() {
-  const [count, setCount] = useState(0)
+export type User = {
+  email: string
+  password: string
+}
+
+const App = () => {
+  const [users, setUsers] = useState<User[]>([])
+
+  const addUser = (user: User) => {
+    setUsers((prev) => [...prev, user])
+  }
 
   return (
-    <>
-      <div>
-        <a
-          href="https://vite.dev"
-          target="_blank"
-        >
-          <img
-            src={viteLogo}
-            className="logo"
-            alt="Vite logo"
-          />
-        </a>
-        <a
-          href="https://react.dev"
-          target="_blank"
-        >
-          <img
-            src={reactLogo}
-            className="logo react"
-            alt="React logo"
-          />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
+    <main className="mx-auto max-w-4xl space-y-10 p-8">
+      <h1 className="mb-8 text-center text-4xl font-bold">
+        React ecosystem: Forms and validation
+      </h1>
+
+      <section className="space-y-6">
+        <Card>
+          <CardHeader>
+            <CardTitle>
+              <h2 className="text-center text-xl font-bold">
+                React Hook Form + Zod
+              </h2>
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="p-6">
+            <RHFForm onSubmit={addUser} />
+          </CardContent>
+        </Card>
+
+        <Separator />
+
+        <Card>
+          <CardHeader>
+            <CardTitle>
+              <h2 className="text-center text-xl font-bold">
+                Formik + Valibot
+              </h2>
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="p-6">
+            <FormikForm onSubmit={addUser} />
+          </CardContent>
+        </Card>
+
+        <Separator />
+
+        {/*<Card>
+          <CardHeader>
+                               <CardTitle>
+                            <h2 className="text-xl font-bold text-center">
+                                TanStack Form + TypeBox
+                            </h2>
+                        </CardTitle>
+            <CardTitle className="text-xl font-bold"></CardTitle>
+          </CardHeader>
+          <CardContent className="p-6">
+            <TanStackFormExample onSubmit={addUser} />
+          </CardContent>
+        </Card>*/}
+      </section>
+
+      <Separator />
+
+      <section>
+        <h2 className="mb-4 text-center text-2xl font-semibold">Users</h2>
+        <div className="overflow-x-auto rounded-lg border border-gray-200 shadow">
+          <Table className="min-w-full">
+            <TableHeader>
+              <TableRow>
+                <TableHead className="text-center">Email</TableHead>
+                <TableHead className="text-center">Password</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {users.map((user, idx) => (
+                <TableRow key={idx}>
+                  <TableCell>{user.email}</TableCell>
+                  <TableCell>{user.password}</TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </div>
+      </section>
+    </main>
   )
 }
 
