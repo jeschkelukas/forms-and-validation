@@ -1,7 +1,5 @@
 import { useState } from "react"
 
-// import { TanStackFormExample } from "./forms/TanStackForm"
-
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Separator } from "@/components/ui/separator"
 import {
@@ -15,12 +13,14 @@ import {
 
 import { FormikForm } from "./forms/FormikForm"
 import { RHFForm } from "./forms/RHFForm"
+import { TanStackForm } from "./forms/TanStackForm"
 
 import "./App.css"
 
 export type User = {
   email: string
   password: string
+  age: number
 }
 
 const App = () => {
@@ -31,13 +31,13 @@ const App = () => {
   }
 
   return (
-    <main className="mx-auto max-w-4xl space-y-10 p-8">
-      <h1 className="mb-8 text-center text-4xl font-bold">
+    <main className="mx-auto max-w-4xl p-8">
+      <h1 className="mb-12 text-center text-4xl font-bold">
         React ecosystem: Forms and validation
       </h1>
 
-      <section className="space-y-6">
-        <Card>
+      <section className="flex flex-col gap-10">
+        <Card className="bg-card text-card-foreground flex flex-col gap-6 rounded-xl border p-6 shadow-sm">
           <CardHeader>
             <CardTitle>
               <h2 className="text-center text-xl font-bold">
@@ -45,14 +45,14 @@ const App = () => {
               </h2>
             </CardTitle>
           </CardHeader>
-          <CardContent className="p-6">
+          <CardContent>
             <RHFForm onSubmit={addUser} />
           </CardContent>
         </Card>
 
-        <Separator />
+        <Separator className="my-[20px]" />
 
-        <Card>
+        <Card className="bg-card text-card-foreground flex flex-col gap-6 rounded-xl border p-6 shadow-sm">
           <CardHeader>
             <CardTitle>
               <h2 className="text-center text-xl font-bold">
@@ -60,29 +60,28 @@ const App = () => {
               </h2>
             </CardTitle>
           </CardHeader>
-          <CardContent className="p-6">
+          <CardContent>
             <FormikForm onSubmit={addUser} />
           </CardContent>
         </Card>
 
-        <Separator />
+        <Separator className="my-[20px]" />
 
-        {/*<Card>
+        <Card className="bg-card text-card-foreground flex flex-col gap-6 rounded-xl border p-6 shadow-sm">
           <CardHeader>
-                               <CardTitle>
-                            <h2 className="text-xl font-bold text-center">
-                                TanStack Form + TypeBox
-                            </h2>
-                        </CardTitle>
-            <CardTitle className="text-xl font-bold"></CardTitle>
+            <CardTitle>
+              <h2 className="text-center text-xl font-bold">
+                TanStack Form + Zod
+              </h2>
+            </CardTitle>
           </CardHeader>
-          <CardContent className="p-6">
-            <TanStackFormExample onSubmit={addUser} />
+          <CardContent>
+            <TanStackForm onSubmit={addUser} />
           </CardContent>
-        </Card>*/}
+        </Card>
       </section>
 
-      <Separator />
+      <Separator className="my-[20px]" />
 
       <section>
         <h2 className="mb-4 text-center text-2xl font-semibold">Users</h2>

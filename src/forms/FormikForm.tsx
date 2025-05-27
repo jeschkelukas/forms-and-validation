@@ -12,6 +12,8 @@ import {
   type InferOutput,
 } from "valibot"
 
+import { Label } from "@/components/ui/label.tsx"
+
 const EmailSchema = pipe(
   string(),
   nonEmpty("Please enter your email."),
@@ -53,11 +55,14 @@ export const FormikForm = ({
   >
     <Form className="flex flex-col gap-4">
       <div>
+        <Label htmlFor={"email"}>Email</Label>
         <Field
           name="email"
-          placeholder="Email"
           className="w-full rounded border p-2"
-          validate={(value: User["email"]) => safeParse(EmailSchema, value).issues?.shift()?.message}
+          placeholder="example@email.com"
+          validate={(value: User["email"]) =>
+            safeParse(EmailSchema, value).issues?.shift()?.message
+          }
         />
         <ErrorMessage
           name="email"
@@ -67,12 +72,15 @@ export const FormikForm = ({
       </div>
 
       <div>
+        <Label htmlFor={"password"}>Password</Label>
         <Field
           name="password"
-          placeholder="Password"
           type="password"
+          placeholder="********"
           className="w-full rounded border p-2"
-          validate={(value: User["password"]) => safeParse(PasswordSchema, value).issues?.shift()?.message}
+          validate={(value: User["password"]) =>
+            safeParse(PasswordSchema, value).issues?.shift()?.message
+          }
         />
         <ErrorMessage
           name="password"
@@ -82,12 +90,15 @@ export const FormikForm = ({
       </div>
 
       <div>
+        <Label htmlFor={"age"}>Age</Label>
         <Field
           name="age"
           type="number"
-          placeholder="Age"
+          placeholder="18+"
           className="w-full rounded border p-2"
-          validate={(value: User["age"]) => safeParse(AgeSchema, value).issues?.shift()?.message}
+          validate={(value: User["age"]) =>
+            safeParse(AgeSchema, value).issues?.shift()?.message
+          }
         />
         <ErrorMessage
           name="age"

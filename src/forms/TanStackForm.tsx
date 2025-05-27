@@ -1,65 +1,124 @@
-// import { Type } from "@sinclair/typebox"
-// import { Value } from "@sinclair/typebox/value"
-// import { useForm} from "@tanstack/react-form"
-//
-// import type { User } from "../App.tsx"
-// import type {Static} from "@sinclair/typebox";
-//
-// const schema = Type.Object({
-//     email: Type.String({ format: "email" }),
-//     password: Type.String({ minLength: 8 }),
-// })
-//
-// type FormType = Static<typeof schema>
-//
-// export function TanStackFormExample({
-//                                         onSubmit,
-//                                     }: {
-//     onSubmit: (user: User) => void
-// }) {
-//     const form = useForm<FormType, any, any, any, any, any, any, any, any, any>({
-//         defaultValues: {
-//             email: "",
-//             password: "",
-//         },
-//         onSubmit: async ({ value }) => {
-//             if (Value.Check(schema, value)) {
-//                 onSubmit(value)
-//                 form.reset()
-//             } else {
-//                 alert("Validation failed")
-//             }
-//         },
-//     })
-//
-//     // ✨ Musíš vytvořit pole přes useField()
-//     const emailField = form.useField({ name: "email" })
-//     const passwordField = form.useField({ name: "password" })
-//
-//     return (
-//         <form onSubmit={form.handleSubmit} className="flex flex-col gap-4 max-w-md mb-8">
-//             <input
-//                 {...emailField.getInputProps()}
-//                 placeholder="Email"
-//                 className="border p-2 rounded"
-//             />
-//             {emailField.state.meta.error && (
-//                 <p className="text-red-500 text-sm">{emailField.state.meta.error}</p>
-//             )}
-//
-//             <input
-//                 {...passwordField.getInputProps()}
-//                 placeholder="Password"
-//                 type="password"
-//                 className="border p-2 rounded"
-//             />
-//             {passwordField.state.meta.error && (
-//                 <p className="text-red-500 text-sm">{passwordField.state.meta.error}</p>
-//             )}
-//
-//             <button type="submit" className="bg-purple-500 hover:bg-purple-600 text-white p-2 rounded">
-//                 Submit
-//             </button>
-//         </form>
-//     )
-// }
+import { useForm } from "@tanstack/react-form"
+import { z } from "zod"
+
+import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
+
+const userSchema = z.object({
+  email: z
+    .string()
+    .email("Invalid email")
+    .transform((val) => val.trim().toLowerCase()),
+  password: z
+    .string()
+    .min(8, "Password must be at least 8 characters")
+    .refine((val) => !val.includes("password"), {
+      message: 'Password must not contain "password"',
+    }),
+  age: z.number().min(18, "Must be at least 18").max(99, "Must be under 100"),
+})
+
+type User = z.infer<typeof userSchema>
+
+export function TanStackForm({ onSubmit }: { onSubmit: (data: User) => void }) {
+  const form = useForm({
+    defaultValues: {
+      email: "",
+      password: "",
+      age: 18,
+    } as User,
+    validators: {
+      onBlur: userSchema,
+    },
+    onSubmit: async ({ value }) => {
+      onSubmit(value)
+    },
+  })
+
+  return (
+    <form
+      onSubmit={async (e) => {
+        e.preventDefault()
+        e.stopPropagation()
+        await form.handleSubmit()
+        form.reset()
+      }}
+      className="flex flex-col gap-4"
+    >
+      <form.Field name="email">
+        {(field) => (
+          <div>
+            <Label htmlFor={field.name}>Email</Label>
+            <Input
+              id={field.name}
+              placeholder="example@email.com"
+              value={String(field.state.value)}
+              onBlur={field.handleBlur}
+              onChange={(e) => field.handleChange(e.target.value)}
+            />
+            {!field.state.meta.isValid && (
+              <p className="text-sm text-red-500">
+                {field.state.meta.errors.map((err) => err?.message).join(", ")}
+              </p>
+            )}
+          </div>
+        )}
+      </form.Field>
+
+      <form.Field name="password">
+        {(field) => (
+          <div>
+            <Label htmlFor={field.name}>Password</Label>
+            <Input
+              id={field.name}
+              type="password"
+              placeholder="********"
+              value={String(field.state.value)}
+              onBlur={field.handleBlur}
+              onChange={(e) => field.handleChange(e.target.value)}
+            />
+            {!field.state.meta.isValid && (
+              <p className="text-sm text-red-500">
+                {field.state.meta.errors.map((err) => err?.message).join(", ")}
+              </p>
+            )}
+          </div>
+        )}
+      </form.Field>
+
+      <form.Field name="age">
+        {(field) => (
+          <div>
+            <Label htmlFor={field.name}>Age</Label>
+            <Input
+              id={field.name}
+              type="number"
+              placeholder="18+"
+              value={String(field.state.value)}
+              onBlur={field.handleBlur}
+              onChange={(e) => field.handleChange(e.target.valueAsNumber)}
+            />
+            {!field.state.meta.isValid && (
+              <p className="text-sm text-red-500">
+                {field.state.meta.errors.map((err) => err?.message).join(", ")}
+              </p>
+            )}
+          </div>
+        )}
+      </form.Field>
+
+      <form.Subscribe
+        selector={(state) => [state.canSubmit, state.isSubmitting]}
+        children={([canSubmit, isSubmitting]) => (
+          <Button
+            type="submit"
+            disabled={!canSubmit}
+          >
+            {isSubmitting ? "Submitting…" : "Submit"}
+          </Button>
+        )}
+      />
+    </form>
+  )
+}
